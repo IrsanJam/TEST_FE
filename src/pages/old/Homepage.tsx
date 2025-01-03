@@ -3,7 +3,6 @@ import CardCopy from "../../components/DAY 1/CardCopy";
 import gambarIcon from "../../assets/icons8-edit-64.png";
 import addIcon from "../../assets/icons8-add-48.png";
 import closeIcon from "../../assets/icons8-close-94.png";
-import { TodoistApi } from "@doist/todoist-api-typescript";
 import Cookies from "js-cookie";
 
 import { useNavigate } from "react-router-dom";
@@ -24,8 +23,6 @@ export interface TypeState {
 }
 
 const Homepage: FC = () => {
-  const apiKey = import.meta.env.VITE_TODO;
-  const api = new TodoistApi(apiKey);
   const navigate = useNavigate();
   const authToken = Cookies.get("authToken");
   const [data, setData] = useState<TypeState>({
@@ -57,7 +54,7 @@ const Homepage: FC = () => {
           Authorization: `Bearer ${authToken}`,
         },
       }) .then((tasks: any) => {
-          setData((prev: any) => ({ ...prev, dataAPI: tasks.data }));
+          setData((prev: any) => ({ ...prev, dataAPI: tasks.data.data }));
         })
     } catch {
       console.log("Ada Error");
@@ -86,16 +83,19 @@ const Homepage: FC = () => {
   };
   
 
-  const deleteProduct = (id: any) => {
-    api
-      .deleteTask(id)
-      .then((isSuccess) => console.log(isSuccess))
+  const deleteProduct = async (id: any) => {
+    await axios.delete(`${import.meta.env.VITE_API_URL}/checklist/${id}`,{
+      headers:{
+        Authorization: `Bearer ${authToken}`,
+      }
+    })
+      .then(() => showProduct())
       .catch((error) => console.log(error));
   };
 
   useEffect(() => {
     showProduct();
-  }, [showProduct]);
+  }, []);
 
   return (
     <>
@@ -135,7 +135,7 @@ const Homepage: FC = () => {
         <div className="lg:grid lg:pt-24 pt-16 flex flex-col sm:grid-cols-1   items-center h-[80vh] justify-start">
           {data.dataAPI &&
             data.dataAPI.map((item: any, index: number) => {
-              return <CardCopy key={index} id={item.id} description={item.content} hapus={() => deleteProduct(item.id)} detail={() => detailFunc(item.id)} />;
+              return <CardCopy key={index} id={item.id} description={item.name} hapus={() => deleteProduct(item.id)} detail={() => detailFunc(item.id)} />;
             })}
         </div>
 
