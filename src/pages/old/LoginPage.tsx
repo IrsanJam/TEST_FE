@@ -6,7 +6,7 @@ import axios from 'axios';
 
 const LoginPage = () => {
   const [loginState, setLoginState] = React.useState({
-    email: '',
+    username: '',
     password: '',
   });
   const navigate = useNavigate();
@@ -15,11 +15,12 @@ const LoginPage = () => {
     e.preventDefault();
     try {
       const response = await axios.post(`${import.meta.env.VITE_API_URL}/login`, {
-        email: loginState.email,
+        username: loginState.username,
         password: loginState.password,
       });
       if (response) {
-        const token = response.data.accessToken;
+        const token = response.data.data.token;
+        console.log(token)
         Cookies.set('authToken', token);
         Swal.fire({
           title: 'Confirmation',

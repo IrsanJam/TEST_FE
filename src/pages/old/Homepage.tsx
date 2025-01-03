@@ -4,8 +4,10 @@ import gambarIcon from "../../assets/icons8-edit-64.png";
 import addIcon from "../../assets/icons8-add-48.png";
 import closeIcon from "../../assets/icons8-close-94.png";
 import { TodoistApi } from "@doist/todoist-api-typescript";
+import Cookies from "js-cookie";
 
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 interface TypeProduct {
   id: number | string;
@@ -15,7 +17,7 @@ interface TypeProduct {
 export interface TypeState {
   modalBox: boolean;
   dataAPI: TypeProduct[];
-  dataProduct: {
+  dataTodo: {
     id: number | string;
     name: string;
   };
@@ -25,14 +27,18 @@ const Homepage: FC = () => {
   const apiKey = import.meta.env.VITE_TODO;
   const api = new TodoistApi(apiKey);
   const navigate = useNavigate();
+  const authToken = Cookies.get("authToken");
   const [data, setData] = useState<TypeState>({
     modalBox: false,
     dataAPI: [],
-    dataProduct: {
+    dataTodo: {
       id: 0,
       name: "",
     },
   });
+
+  console.log(data)
+
 
   const detailFunc = (item: any) => {
     if (item) {
@@ -46,43 +52,39 @@ const Homepage: FC = () => {
 
   const showProduct = async () => {
     try {
-      api
-        .getTasks()
-        .then((tasks: any) => {
-          setData((prev: any) => ({ ...prev, dataAPI: tasks }));
+       await axios.get(`${import.meta.env.VITE_API_URL}/checklist`, {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      }) .then((tasks: any) => {
+          setData((prev: any) => ({ ...prev, dataAPI: tasks.data }));
         })
-        .catch((error) => {
-          if (error.response) {
-            console.log("Error response:", error.response.data);
-          } else if (error.request) {
-            console.log("No response received:", error.request);
-          } else {
-            console.log("Error:", error.message);
-          }
-        });
     } catch {
       console.log("Ada Error");
     }
   };
 
   const postProduct = async () => {
-    const { name } = data.dataProduct;
+    const { name } = data.dataTodo;
+  
     try {
-      api
-        .addTask({
-          content: name,
-          dueString: "tomorrow at 12:00",
-          dueLang: "en",
-          priority: 4,
-        })
-        .then(() => {
-          setData((prev) => ({ ...prev, modalBox: !prev.modalBox }));
-          showProduct();
-        });
+       await axios.post(
+        `${import.meta.env.VITE_API_URL}/checklist`,
+        { name }, // Perbaiki format payload
+        {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        }
+      ) .then(() => {
+        setData((prev) => ({ ...prev, modalBox: !prev.modalBox }));
+        showProduct();
+      });
     } catch (error) {
-      console.log(error);
+      throw error; // Propagasi error jika diperlukan
     }
   };
+  
 
   const deleteProduct = (id: any) => {
     api
@@ -107,7 +109,7 @@ const Homepage: FC = () => {
                 <span className="font-semibold text-slate-700 text-2xl lg:text-4xl "> Add Task</span>
 
                 <textarea
-                  onChange={(e) => setData((prev) => ({ ...prev, dataProduct: { ...prev.dataProduct, name: e.target.value } }))}
+                  onChange={(e) => setData((prev) => ({ ...prev, dataTodo: { ...prev.dataTodo, name: e.target.value } }))}
                   placeholder=" Masukan Deskripsi"
                   className="border-slate-200 h-2/6 bg-slate-300 border-2 w-[80%] rounded-md px-5 py-3"
                 />

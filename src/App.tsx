@@ -3,7 +3,6 @@ import Homepage from "./pages/old/Homepage";
 import DetailPage from "./pages/old/DetailPage";
 import ProtectedRoute from "./pages/protected/ProtectedRoute";
 import LoginPage from "./pages/old/LoginPage";
-// import Home from "./pages/Real/Home";
 
 const App = () => {
   return (
