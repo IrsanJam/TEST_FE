@@ -34,8 +34,6 @@ const Homepage: FC = () => {
     },
   });
 
-  console.log(data)
-
 
   const detailFunc = (item: any) => {
     if (item) {
@@ -129,10 +127,10 @@ const Homepage: FC = () => {
           </div>
         )}
 
-        <div className="flex py-10 fixed top-0 w-screen z-10 bg-white flex-col justify-center shadow-md items-center">
+        <div className="flex py-10 mb-[10%] fixed top-0 w-screen z-10 bg-white flex-col justify-center shadow-md items-center">
           <span className="text-3xl md:text-4xl font-semibold">Todo List</span>
         </div>
-        <div className="lg:grid lg:pt-24 pt-16 flex flex-col sm:grid-cols-1   items-center h-[80vh] justify-start">
+        <div className="lg:grid mt-[40px] lg:pt-24 pt-16 flex flex-col sm:grid-cols-1   items-center h-[80vh] justify-start">
           {data.dataAPI &&
             data.dataAPI.map((item: any, index: number) => {
               return <CardCopy key={index} id={item.id} description={item.name} hapus={() => deleteProduct(item.id)} detail={() => detailFunc(item.id)} />;

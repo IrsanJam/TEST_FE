@@ -21,7 +21,7 @@ const DetailPage: FC = () => {
   const [data, setData] = useState<TypeState>({
     modalBox: false,
     dataAPI: [],
-    dataProduct: {
+    dataTodo: {
       id: 0,
       name: "",
     },
@@ -38,7 +38,7 @@ const DetailPage: FC = () => {
 
   const updateTask = () => {
     api
-      .updateTask(id, { content: data.dataProduct.name })
+      .updateTask(id, { content: data.dataTodo.name })
       .then((isSuccess) => console.log(isSuccess))
       .catch((error) => console.log(error));
     setData((prev) => ({ ...prev, modalBox: !prev.modalBox }));
@@ -60,7 +60,7 @@ const DetailPage: FC = () => {
                 <span className="font-semibold text-slate-700 text-2xl lg:text-4xl "> Edit Task</span>
 
                 <textarea
-                  onChange={(e) => setData((prev) => ({ ...prev, dataProduct: { ...prev.dataProduct, name: e.target.value } }))}
+                  onChange={(e) => setData((prev) => ({ ...prev, dataTodo: { ...prev.dataTodo, name: e.target.value } }))}
                   placeholder=" Masukan Deskripsi"
                   className="border-slate-200 h-2/6 bg-slate-300 border-2 w-[80%] rounded-md px-5 py-3"
                 />
